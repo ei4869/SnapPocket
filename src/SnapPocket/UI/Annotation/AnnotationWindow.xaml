@@ -1,0 +1,348 @@
+<Window x:Class="SnapPocket.UI.Annotation.AnnotationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SnapPocket - 快速标注"
+        WindowStartupLocation="CenterScreen"
+        MinWidth="920"
+        MinHeight="540"
+        Background="{DynamicResource SolidBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        KeyDown="OnWindowKeyDown"
+        KeyUp="OnWindowKeyUp">
+
+    <Window.Resources>
+        <Style x:Key="ToolChipButtonStyle" TargetType="RadioButton">
+            <Setter Property="GroupName" Value="AnnotationTools" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="Padding" Value="9,5" />
+            <Setter Property="FontFamily" Value="{StaticResource AppFontFamily}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Clean flat ghost icon button for segmented pill groups -->
+        <Style x:Key="GhostIconButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="7,5" />
+            <Setter Property="MinWidth" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource AppFontFamily}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.72" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.38" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Dark translucent floating zoom pill button -->
+        <Style x:Key="FloatingZoomButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#FFE8EDF5" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="MinWidth" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="{StaticResource AppFontFamily}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="12"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#28FFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#40FFFFFF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Row 0: Clean Primary Drawing Tool Bar -->
+        <Border Grid.Row="0"
+                Padding="12,8"
+                Background="{DynamicResource CardBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1">
+            <WrapPanel VerticalAlignment="Center">
+                <RadioButton x:Name="ToolSelect" Content="选择(V)" Style="{StaticResource ToolChipButtonStyle}" Tag="Select" IsChecked="True" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolRect" Content="矩形(R)" Style="{StaticResource ToolChipButtonStyle}" Tag="Rectangle" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolEllipse" Content="椭圆(O)" Style="{StaticResource ToolChipButtonStyle}" Tag="Ellipse" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolLine" Content="直线(L)" Style="{StaticResource ToolChipButtonStyle}" Tag="Line" ToolTip="按住 Shift 对齐到 45°" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolArrow" Content="箭头(A)" Style="{StaticResource ToolChipButtonStyle}" Tag="Arrow" ToolTip="按住 Shift 对齐到 45°" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolPen" Content="画笔(P)" Style="{StaticResource ToolChipButtonStyle}" Tag="Pen" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolHighlighter" Content="荧光笔(H)" Style="{StaticResource ToolChipButtonStyle}" Tag="Highlighter" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolText" Content="文字(T)" Style="{StaticResource ToolChipButtonStyle}" Tag="Text" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolMosaic" Content="马赛克(M)" Style="{StaticResource ToolChipButtonStyle}" Tag="Mosaic" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolBlur" Content="模糊(B)" Style="{StaticResource ToolChipButtonStyle}" Tag="Blur" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolStep" Content="序号(N)" Style="{StaticResource ToolChipButtonStyle}" Tag="StepBadge" Click="ToolButton_Click" />
+                <RadioButton x:Name="ToolCrop" Content="裁剪(C)" Style="{StaticResource ToolChipButtonStyle}" Tag="Crop" Click="ToolButton_Click" />
+            </WrapPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Padding="12,6"
+                Background="{DynamicResource SurfaceElevatedBrush}"
+                BorderBrush="{DynamicResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <DockPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <StackPanel x:Name="CropConfirmBar" DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed">
+                        <Button Content="应用裁剪" Style="{StaticResource AccentButtonStyle}" Padding="10,4" FontSize="12" Margin="0,0,6,0" Click="ApplyCrop_Click" />
+                        <Button Content="取消选区" Style="{StaticResource SubtleButtonStyle}" Padding="10,4" FontSize="12" Click="CancelCrop_Click" />
+                    </StackPanel>
+                    <WrapPanel x:Name="ToolOptionsPanel" VerticalAlignment="Center" />
+                </DockPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Segmented Transform Pill with crisp vector SVG icons -->
+                    <Border Background="{DynamicResource CardBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}"
+                            BorderThickness="1"
+                            CornerRadius="7"
+                            Padding="2"
+                            Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource GhostIconButtonStyle}" ToolTip="逆时针旋转 90° (Ctrl+L)" Click="RotateLeft_Click">
+                                <Viewbox Width="15" Height="15">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                              Data="M9,4 L5,8 L9,12 M5,8 L14,8 A6,6 0 1 1 8,14" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                            <Button Style="{StaticResource GhostIconButtonStyle}" ToolTip="顺时针旋转 90° (Ctrl+R)" Click="RotateRight_Click">
+                                <Viewbox Width="15" Height="15">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                              Data="M15,4 L19,8 L15,12 M19,8 L10,8 A6,6 0 1 0 16,14" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                            <Border Width="1" Height="14" Background="{DynamicResource BorderSubtleBrush}" Margin="2,0" />
+                            <Button Style="{StaticResource GhostIconButtonStyle}" ToolTip="水平翻转" Click="FlipHorizontal_Click">
+                                <Viewbox Width="15" Height="15">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.8" StrokeStartLineCap="Round" Data="M12,4 L12,20" StrokeDashArray="2,2" />
+                                        <Path Fill="{DynamicResource TextPrimaryBrush}" Data="M9,7 L4,12 L9,17 Z" />
+                                        <Path Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Data="M15,7 L20,12 L15,17 Z" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                            <Button Style="{StaticResource GhostIconButtonStyle}" ToolTip="垂直翻转" Click="FlipVertical_Click">
+                                <Viewbox Width="15" Height="15">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.8" StrokeStartLineCap="Round" Data="M4,12 L20,12" StrokeDashArray="2,2" />
+                                        <Path Fill="{DynamicResource TextPrimaryBrush}" Data="M7,9 L12,4 L17,9 Z" />
+                                        <Path Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.8" StrokeLineJoin="Round" Data="M7,15 L12,20 L17,15 Z" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Segmented Undo / Redo / Delete Pill -->
+                    <Border Background="{DynamicResource CardBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}"
+                            BorderThickness="1"
+                            CornerRadius="7"
+                            Padding="2">
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="UndoButton" Content="撤销" Style="{StaticResource GhostIconButtonStyle}" Padding="9,4" ToolTip="Ctrl+Z" Click="UndoButton_Click" />
+                            <Button x:Name="RedoButton" Content="重做" Style="{StaticResource GhostIconButtonStyle}" Padding="9,4" ToolTip="Ctrl+Y" Click="RedoButton_Click" />
+                            <Border Width="1" Height="14" Background="{DynamicResource BorderSubtleBrush}" Margin="2,0" />
+                            <Button x:Name="DeleteSelectedButton" Content="删除" Foreground="{DynamicResource DangerBrush}" Style="{StaticResource GhostIconButtonStyle}" Padding="9,4" IsEnabled="False" ToolTip="删除选中对象 (Delete)" Click="DeleteSelected_Click" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Row 2: Scrollable Interactive Canvas + Floating Translucent Zoom Pill -->
+        <Grid Grid.Row="2" Background="#FF101217">
+            <ScrollViewer x:Name="CanvasScrollViewer"
+                          Focusable="False"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto"
+                          Background="#FF101217"
+                          Padding="18"
+                          PreviewMouseWheel="CanvasScrollViewer_PreviewMouseWheel"
+                          PreviewMouseDown="CanvasScrollViewer_PreviewMouseDown"
+                          PreviewMouseMove="CanvasScrollViewer_PreviewMouseMove"
+                          PreviewMouseUp="CanvasScrollViewer_PreviewMouseUp">
+                <Grid x:Name="CanvasHost"
+                      Background="Transparent"
+                      ClipToBounds="True"
+                      Focusable="True"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Cursor="Arrow"
+                      MouseLeftButtonDown="Canvas_MouseDown"
+                      MouseMove="Canvas_MouseMove"
+                      MouseLeftButtonUp="Canvas_MouseUp">
+                    <Canvas IsHitTestVisible="False">
+                        <Image x:Name="PreviewImage" Stretch="Fill" />
+                    </Canvas>
+
+                    <!-- Inline Text Editor Overlay -->
+                    <Canvas x:Name="TextEditorLayer">
+                        <TextBox x:Name="InlineTextBox"
+                                 Visibility="Collapsed"
+                                 AcceptsReturn="True"
+                                 MinWidth="136"
+                                 Padding="7,4"
+                                 Background="#DD14171F"
+                                 Foreground="#FFEF5350"
+                                 CaretBrush="White"
+                                 BorderBrush="#FF4C9AFF"
+                                 BorderThickness="1.5"
+                                 FontFamily="Microsoft YaHei UI"
+                                 FontWeight="Bold"
+                                 FontSize="20"
+                                 PreviewMouseDown="InlineTextBox_PreviewMouseDown"
+                                 PreviewKeyDown="InlineTextBox_KeyDown"
+                                 LostFocus="InlineTextBox_LostFocus" />
+                    </Canvas>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Sleek Floating Zoom Capsule (Bottom-Right of Canvas, Win11 Photos / Figma style) -->
+            <Border HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,18,16"
+                    Padding="4,3"
+                    CornerRadius="16"
+                    Background="#D91B1E26"
+                    BorderBrush="#33FFFFFF"
+                    BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="14" ShadowDepth="3" Opacity="0.35" Color="#000000" />
+                </Border.Effect>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="−" FontSize="14" Style="{StaticResource FloatingZoomButtonStyle}" ToolTip="缩小 (Ctrl+-)" Click="ZoomOut_Click" />
+                    <Button x:Name="ZoomPercentButton" Content="100%" MinWidth="50" FontFamily="Consolas" FontSize="11.5" Style="{StaticResource FloatingZoomButtonStyle}" ToolTip="点击切换 100% 原图 / 适应窗口" Click="ZoomToggleFit_Click" />
+                    <Button Content="+" FontSize="14" Style="{StaticResource FloatingZoomButtonStyle}" ToolTip="放大 (Ctrl++)" Click="ZoomIn_Click" />
+                    <Border Width="1" Height="14" Background="#33FFFFFF" Margin="4,0" />
+                    <Button Content="适应" FontSize="11.5" Padding="9,4" Style="{StaticResource FloatingZoomButtonStyle}" ToolTip="适应窗口 (Ctrl+0)" Click="ZoomFit_Click" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Row 3: Footer Action Bar -->
+        <Border Grid.Row="3"
+                Padding="14,10"
+                Background="{DynamicResource CardBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderSubtleBrush}"
+                BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock x:Name="StatusInfoText"
+                               FontSize="12"
+                               TextTrimming="CharacterEllipsis"
+                               Foreground="{DynamicResource TextSecondaryBrush}" />
+                    <TextBlock Text="提示：Ctrl+滚轮缩放，中键或空格+左键拖拽平移；文字工具 Enter 完成 / Shift+Enter 换行；Enter 保存，Esc 放弃"
+                               Margin="0,2,0,0"
+                               FontSize="10.5"
+                               Foreground="{DynamicResource TextMutedBrush}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="贴图置顶"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Padding="12,7"
+                            Margin="0,0,8,0"
+                            Click="PinButton_Click" />
+                    <Button Content="放弃 (Esc)"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Padding="12,7"
+                            Margin="0,0,8,0"
+                            Click="CancelButton_Click" />
+                    <Button Content="确认保存并复制 (Enter)"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Padding="16,7"
+                            Click="SaveButton_Click" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+

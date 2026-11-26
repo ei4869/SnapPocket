@@ -1,0 +1,40 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="AppBackgroundColor">#E8181A20</Color>
+    <Color x:Key="SolidBackgroundColor">#FF181A20</Color>
+    <Color x:Key="CardBackgroundColor">#FF22252E</Color>
+    <Color x:Key="CardHoverColor">#FF2B2F3B</Color>
+    <Color x:Key="SurfaceElevatedColor">#FF2A2E39</Color>
+    <Color x:Key="BorderSubtleColor">#33FFFFFF</Color>
+    <Color x:Key="BorderStrongColor">#4DFFFFFF</Color>
+    <Color x:Key="TextPrimaryColor">#FFF3F5F9</Color>
+    <Color x:Key="TextSecondaryColor">#FFA4ACB9</Color>
+    <Color x:Key="TextMutedColor">#FF778091</Color>
+    <Color x:Key="AccentColor">#FF4C9AFF</Color>
+    <Color x:Key="AccentHoverColor">#FF66AAFF</Color>
+    <Color x:Key="AccentTextColor">#FFFFFFFF</Color>
+    <Color x:Key="DangerColor">#FFEF5350</Color>
+    <Color x:Key="SuccessColor">#FF4CAF7D</Color>
+    <Color x:Key="WarningColor">#FFFFB74D</Color>
+    <Color x:Key="DockPillColor">#CC20242E</Color>
+    <Color x:Key="DockPillAccentColor">#FF4C9AFF</Color>
+
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBackgroundColor}" />
+    <SolidColorBrush x:Key="SolidBackgroundBrush" Color="{StaticResource SolidBackgroundColor}" />
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}" />
+    <SolidColorBrush x:Key="CardHoverBrush" Color="{StaticResource CardHoverColor}" />
+    <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="{StaticResource SurfaceElevatedColor}" />
+    <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtleColor}" />
+    <SolidColorBrush x:Key="BorderStrongBrush" Color="{StaticResource BorderStrongColor}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}" />
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="{StaticResource AccentTextColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="DockPillBrush" Color="{StaticResource DockPillColor}" />
+    <SolidColorBrush x:Key="DockPillAccentBrush" Color="{StaticResource DockPillAccentColor}" />
+</ResourceDictionary>

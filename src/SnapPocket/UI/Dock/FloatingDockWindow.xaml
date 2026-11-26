@@ -1,0 +1,263 @@
+<Window x:Class="SnapPocket.UI.Dock.FloatingDockWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True">
+
+    <Grid x:Name="RootGrid" Margin="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Slim Edge Pill / Handle -->
+        <Border x:Name="HandleBorder"
+                Grid.Column="1"
+                Width="8"
+                Height="76"
+                VerticalAlignment="Center"
+                Cursor="Hand"
+                Background="{DynamicResource DockPillBrush}"
+                BorderBrush="{DynamicResource BorderStrongBrush}"
+                BorderThickness="1"
+                CornerRadius="8,0,0,8"
+                MouseLeftButtonDown="Handle_MouseLeftButtonDown"
+                MouseMove="Handle_MouseMove"
+                MouseLeftButtonUp="Handle_MouseLeftButtonUp">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.32" Color="#000000" />
+            </Border.Effect>
+            <Grid>
+                <!-- Slim edge indicator line (shown when hidden) -->
+                <Border x:Name="HiddenAccentBar"
+                        Width="3"
+                        Height="34"
+                        CornerRadius="1.5"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource DockPillAccentBrush}" />
+
+                <!-- Expanded handle icon (shown on peek / expanded) -->
+                <StackPanel x:Name="HandleContent"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <Viewbox Width="16" Height="16" Margin="0,0,0,4">
+                        <Canvas Width="24" Height="24">
+                            <Path Stroke="{DynamicResource AccentBrush}"
+                                  StrokeThickness="2.2"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  Data="M4,8 L4,5 Q4,4 5,4 L8,4 M16,4 L19,4 Q20,4 20,5 L20,8 M20,16 L20,19 Q20,20 19,20 L16,20 M8,20 L5,20 Q4,20 4,19 L4,16" />
+                            <Ellipse Canvas.Left="9" Canvas.Top="9" Width="6" Height="6" Fill="{DynamicResource TextPrimaryBrush}" />
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock x:Name="HandleChevron"
+                               Text="‹"
+                               FontSize="13"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextSecondaryBrush}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 4-Section Minimal Control Panel -->
+        <Border x:Name="PanelBorder"
+                Grid.Column="0"
+                Width="288"
+                Margin="8,8,6,8"
+                Padding="14"
+                CornerRadius="12"
+                Visibility="Collapsed"
+                Background="{DynamicResource AppBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderStrongBrush}"
+                BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="22" ShadowDepth="4" Opacity="0.42" Color="#000000" />
+            </Border.Effect>
+
+            <StackPanel>
+                <!-- Section 1: Current Context & Active Save Directory -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border x:Name="ContextBadgeBorder"
+                            Grid.Column="0"
+                            Padding="6,2"
+                            CornerRadius="4"
+                            VerticalAlignment="Center"
+                            Background="{DynamicResource AccentBrush}">
+                        <TextBlock x:Name="ContextBadgeText"
+                                   Text="默认"
+                                   FontFamily="{StaticResource AppFontFamily}"
+                                   FontSize="10.5"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource AccentTextBrush}" />
+                    </Border>
+
+                    <TextBlock x:Name="ContextNameText"
+                               Grid.Column="1"
+                               Margin="8,0,6,0"
+                               VerticalAlignment="Center"
+                               Text="桌面 / 默认"
+                               FontFamily="{StaticResource AppFontFamily}"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"
+                               Foreground="{DynamicResource TextPrimaryBrush}" />
+
+                    <Button x:Name="CollapseButton"
+                            Grid.Column="2"
+                            Content="×"
+                            Width="24"
+                            Height="24"
+                            Padding="0"
+                            FontSize="14"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            ToolTip="收起面板"
+                            Click="CollapseButton_Click" />
+                </Grid>
+
+                <!-- Directory Selector Card -->
+                <Border x:Name="DirectorySelectorCard"
+                        Padding="10,8"
+                        CornerRadius="8"
+                        Cursor="Hand"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1"
+                        MouseLeftButtonUp="DirectoryCard_Click"
+                        ToolTip="点击切换当前应用的保存目录">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock x:Name="DirFolderNameText"
+                                       Text="SnapPocket"
+                                       FontFamily="{StaticResource AppFontFamily}"
+                                       FontSize="12.5"
+                                       FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <TextBlock x:Name="DirFullPathText"
+                                       Margin="0,2,0,0"
+                                       Text="C:\Users\...\Pictures\SnapPocket"
+                                       FontFamily="{StaticResource AppFontFamily}"
+                                       FontSize="10.5"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{DynamicResource TextMutedBrush}" />
+                        </StackPanel>
+                        <TextBlock x:Name="DirDropdownChevron"
+                                   Grid.Column="1"
+                                   Text="▾"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                    </Grid>
+                </Border>
+
+                <!-- Inline Recent Directories & Browse Drawer -->
+                <Border x:Name="RecentDirsDrawer"
+                        Visibility="Collapsed"
+                        Margin="0,6,0,0"
+                        Padding="6"
+                        CornerRadius="8"
+                        Background="{DynamicResource SurfaceElevatedBrush}"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="最近使用目录"
+                                   Margin="6,2,6,4"
+                                   FontFamily="{StaticResource AppFontFamily}"
+                                   FontSize="10.5"
+                                   Foreground="{DynamicResource TextMutedBrush}" />
+                        <ItemsControl x:Name="RecentDirsList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Margin="0,1"
+                                            Padding="8,5"
+                                            HorizontalContentAlignment="Left"
+                                            Style="{StaticResource SubtleButtonStyle}"
+                                            BorderThickness="0"
+                                            Background="Transparent"
+                                            Tag="{Binding}"
+                                            ToolTip="{Binding}"
+                                            Click="RecentDirItem_Click">
+                                        <TextBlock Text="{Binding}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   MaxWidth="226"
+                                                   FontSize="11.5" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Separator Margin="4,6" Background="{DynamicResource BorderSubtleBrush}" />
+                        <Button Content="浏览选择其他文件夹..."
+                                Style="{StaticResource AccentButtonStyle}"
+                                Padding="10,6"
+                                FontSize="12"
+                                Click="BrowseFolderButton_Click" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Section 2: Open Current Directory -->
+                <Button Margin="0,8,0,10"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        Click="OpenCurrentDir_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="打开当前保存目录" FontSize="12.5" />
+                    </StackPanel>
+                </Button>
+
+                <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,10" />
+
+                <!-- Section 3: Two Compact Mode Toggles -->
+                <StackPanel Margin="2,0,2,10">
+                    <CheckBox x:Name="AnnotationToggle"
+                              Content="截屏后快速标注"
+                              Style="{StaticResource FluentToggleSwitchStyle}"
+                              Margin="0,0,0,8"
+                              Click="AnnotationToggle_Click" />
+                    <CheckBox x:Name="RenameToggle"
+                              Content="截屏后自定义命名"
+                              Style="{StaticResource FluentToggleSwitchStyle}"
+                              Click="RenameToggle_Click" />
+                </StackPanel>
+
+                <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,10" />
+
+                <!-- Section 4: Footer Actions (Settings & Exit) -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0"
+                            Content="详细设置"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Click="SettingsButton_Click" />
+                    <Button Grid.Column="2"
+                            Content="退出工具"
+                            Style="{StaticResource DangerSubtleButtonStyle}"
+                            Click="ExitButton_Click" />
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

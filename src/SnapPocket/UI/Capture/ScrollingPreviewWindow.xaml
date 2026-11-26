@@ -1,0 +1,62 @@
+<Window x:Class="SnapPocket.UI.Capture.ScrollingPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SnapPocket 滚动截图预览"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        ResizeMode="NoResize"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer x:Name="PreviewScrollViewer"
+                      VerticalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled">
+            <Canvas x:Name="PreviewExtent" Height="0" ClipToBounds="True">
+                <Image x:Name="LivePreviewImage"
+                       Stretch="Fill"
+                       RenderOptions.BitmapScalingMode="HighQuality" />
+            </Canvas>
+        </ScrollViewer>
+
+        <StackPanel x:Name="Footer" Grid.Row="1" Margin="0,5,0,0">
+            <Border x:Name="StatusNotice"
+                    Visibility="Collapsed"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    CornerRadius="4"
+                    Padding="7,4"
+                    Margin="0,0,0,4">
+                <TextBlock x:Name="StatusText"
+                           FontFamily="{StaticResource AppFontFamily}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
+            </Border>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="FinishButton"
+                        Content="完成拼接"
+                        IsEnabled="False"
+                        Style="{StaticResource AccentButtonStyle}"
+                        FontSize="12"
+                        Padding="9,4"
+                        Margin="0,0,5,0"
+                        Click="FinishNow_Click" />
+                <Button x:Name="CancelButton"
+                        Content="取消"
+                        Style="{StaticResource SubtleButtonStyle}"
+                        FontSize="12"
+                        Padding="8,4"
+                        Click="Cancel_Click" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,95 @@
+<Window x:Class="SnapPocket.UI.Capture.RegionCaptureWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="False"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Cursor="Cross"
+        Background="Black"
+        KeyDown="OnKeyDown"
+        MouseLeftButtonDown="OnMouseDown"
+        MouseMove="OnMouseMove"
+        MouseLeftButtonUp="OnMouseUp"
+        MouseRightButtonUp="OnRightClick">
+    <Grid x:Name="RootGrid">
+        <!-- Frozen desktop background -->
+        <Image x:Name="BackgroundImage"
+               Stretch="Fill"
+               RenderOptions.BitmapScalingMode="NearestNeighbor" />
+
+        <!-- Dimmed overlay with transparent cutout -->
+        <Path x:Name="DimOverlayPath"
+              Fill="#88000000"
+              IsHitTestVisible="False" />
+
+        <!-- Selection / Snap Border -->
+        <Canvas x:Name="OverlayCanvas" IsHitTestVisible="False">
+            <Border x:Name="SelectionBorder"
+                    Visibility="Collapsed"
+                    BorderBrush="#FF4C9AFF"
+                    BorderThickness="2"
+                    Background="Transparent" />
+
+            <!-- Size HUD Badge -->
+            <Border x:Name="SizeBadge"
+                    Visibility="Collapsed"
+                    Padding="8,3"
+                    CornerRadius="4"
+                    Background="#DD14171F"
+                    BorderBrush="#55FFFFFF"
+                    BorderThickness="1">
+                <TextBlock x:Name="SizeBadgeText"
+                           FontFamily="Consolas, Segoe UI"
+                           FontSize="12"
+                           Foreground="White" />
+            </Border>
+
+            <!-- Top Instruction Pill -->
+            <Border x:Name="HintPill"
+                    Padding="12,5"
+                    CornerRadius="14"
+                    Background="#CC14171F"
+                    BorderBrush="#44FFFFFF"
+                    BorderThickness="1">
+                <TextBlock x:Name="HintPillText"
+                           Text="拖拽框选区域 · 单击吸附窗口 · 右键/Esc 取消"
+                           FontFamily="{StaticResource AppFontFamily}"
+                           FontSize="12"
+                           Foreground="#FFF0F4FA" />
+            </Border>
+
+            <!-- Pixel Magnifier Loupe -->
+            <Border x:Name="MagnifierPanel"
+                    Visibility="Collapsed"
+                    CornerRadius="8"
+                    Padding="4"
+                    Background="#EE14171F"
+                    BorderBrush="#66FFFFFF"
+                    BorderThickness="1">
+                <StackPanel>
+                    <Grid Width="132" Height="132">
+                        <Image x:Name="MagnifierImage"
+                               Width="132"
+                               Height="132"
+                               Stretch="Fill"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                        <!-- Crosshair -->
+                        <Rectangle Width="132" Height="1" Fill="#AA4C9AFF" VerticalAlignment="Center" />
+                        <Rectangle Width="1" Height="132" Fill="#AA4C9AFF" HorizontalAlignment="Center" />
+                        <Border Width="12" Height="12" BorderBrush="#FFFFFFFF" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Margin="2,4,2,1" HorizontalAlignment="Center">
+                        <Border x:Name="ColorSwatch" Width="11" Height="11" CornerRadius="2" BorderBrush="#AAFFFFFF" BorderThickness="1" Margin="0,0,5,0" VerticalAlignment="Center" />
+                        <TextBlock x:Name="MagnifierInfoText"
+                                   FontFamily="Consolas"
+                                   FontSize="10.5"
+                                   Foreground="#FFE5EAF2"
+                                   Text="0,0  #000000" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Canvas>
+    </Grid>
+</Window>
